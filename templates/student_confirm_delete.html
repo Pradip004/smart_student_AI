@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card border-danger"><div class="card-body">
+  <h5 class="text-danger">Delete student?</h5>
+  <p>Delete <strong>{{ student.full_name }}</strong> ({{ student.roll_number }})? This cannot be undone.</p>
+  <form method="post">
+    {% csrf_token %}
+    <button class="btn btn-danger">Yes, delete</button>
+    <a class="btn btn-secondary" href="{% url 'dashboard' %}">Cancel</a>
+  </form>
+</div></div>
+{% endblock %}

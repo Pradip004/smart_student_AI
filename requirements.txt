@@ -1,0 +1,12 @@
+Django>=5.2,<5.3
+PyMySQL>=1.1
+cryptography>=42
+dj-database-url>=2.2
+gunicorn>=23.0
+psycopg[binary]>=3.2
+whitenoise>=6.8
+pandas>=2.2
+openpyxl>=3.1
+python-docx>=1.1
+reportlab>=4.0
+requests>=2.31

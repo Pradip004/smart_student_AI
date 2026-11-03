@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+  <div>
+    <p class="text-primary fw-semibold text-uppercase small mb-1">AI search results</p>
+    <h1 class="h3 mb-1">Matching students</h1>
+    {% if question %}<p class="text-secondary mb-0">Your search: “{{ question }}”</p>{% endif %}
+  </div>
+  <a class="btn btn-outline-primary" href="{% url 'ask_ai' %}">New AI search</a>
+</div>
+
+<div class="mb-3">
+  <strong>Interpreted filters:</strong>
+  {% for key, value in filters.items %}<span class="badge bg-primary">{{ key }} = {{ value }}</span> {% endfor %}
+  {% for warning in warnings %}<div class="text-warning small">{{ warning }}</div>{% endfor %}
+</div>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+  <span>{{ results|length }} record{{ results|length|pluralize }} found</span>
+  <div>
+    <a class="btn btn-sm btn-success" href="{% url 'export_report' 'xlsx' %}">Excel</a>
+    <a class="btn btn-sm btn-primary" href="{% url 'export_report' 'docx' %}">Word</a>
+    <a class="btn btn-sm btn-danger" href="{% url 'export_report' 'pdf' %}">PDF</a>
+  </div>
+</div>
+<div class="table-responsive rounded-3 shadow-sm">
+  <table class="table table-striped bg-white align-middle mb-0">
+    <thead class="table-dark">
+      <tr><th>Roll No</th><th>Name</th><th>Department</th><th>Class</th><th>Marks</th><th>Attendance</th><th>Fees</th></tr>
+    </thead>
+    <tbody>
+    {% for s in results %}
+      <tr>
+        <td>{{ s.roll_number }}</td><td>{{ s.full_name }}</td><td>{{ s.department }}</td>
+        <td>{{ s.class_name|default:"&mdash;" }}</td><td>{{ s.marks }}</td><td>{{ s.attendance }}%</td>
+        <td>{% if s.fees_paid %}Paid{% else %}Pending{% endif %}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="7" class="text-center text-muted py-4">No matching students.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

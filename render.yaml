@@ -1,0 +1,28 @@
+databases:
+  - name: smart-student-db
+    databaseName: smart_student_db
+    user: smart_student
+    plan: basic-256mb
+
+services:
+  - type: web
+    name: smart-student-ai
+    runtime: python
+    plan: starter
+    buildCommand: "bash build.sh"
+    startCommand: "gunicorn student_ai.wsgi:application"
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "false"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://*.onrender.com"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: smart-student-db
+          property: connectionString
+      - key: OLLAMA_URL
+        sync: false
