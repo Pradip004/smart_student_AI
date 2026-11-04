@@ -53,8 +53,9 @@ environment variables before deploying:
   environment.
 
 SQLite is suitable only for local development; Vercel's function filesystem is
-not persistent. After setting the environment variables, run
-`python manage.py migrate` against the hosted database from a trusted local
-environment before using the app. Create the initial account with
-`python manage.py createsuperuser` in the same environment. Never commit
-database URLs, secrets, or local environment files.
+not persistent. Production builds run `python manage.py migrate --noinput`
+against the configured database and fail if `DATABASE_URL` is missing. After
+deploying, create the initial account with
+`python manage.py createsuperuser` from a trusted environment configured to use
+the hosted database. Never commit database URLs, secrets, or local environment
+files.
