@@ -37,3 +37,24 @@ endpoint and optionally set `OLLAMA_MODEL` before running searches.
 The Render Blueprint configures PostgreSQL, HTTPS, static files, database
 migrations, and a generated Django secret key. `DJANGO_DEBUG` is disabled for
 the hosted service.
+
+## Vercel deployment
+
+Vercel detects this Django project from `manage.py` and serves its static files
+from the CDN. Import the GitHub repository in Vercel and set these project
+environment variables before deploying:
+
+- `DJANGO_SECRET_KEY`: a newly generated, private Django secret.
+- `DJANGO_DEBUG`: `false`.
+- `DATABASE_URL`: the connection string for a persistent PostgreSQL database.
+- `OLLAMA_URL`: a publicly reachable Ollama `/api/generate` endpoint.
+- `OLLAMA_MODEL`: a model available at that endpoint, if not `gemma3:4b`.
+- `ALLOWED_HOSTS`: add any custom domain not provided by Vercel's deployment
+  environment.
+
+SQLite is suitable only for local development; Vercel's function filesystem is
+not persistent. After setting the environment variables, run
+`python manage.py migrate` against the hosted database from a trusted local
+environment before using the app. Create the initial account with
+`python manage.py createsuperuser` in the same environment. Never commit
+database URLs, secrets, or local environment files.

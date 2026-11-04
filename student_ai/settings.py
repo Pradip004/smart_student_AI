@@ -10,6 +10,10 @@ ALLOWED_HOSTS = [
     host.strip() for host in os.environ.get(
         "ALLOWED_HOSTS", "localhost,127.0.0.1").split(",") if host.strip()
 ]
+for host in (os.environ.get("VERCEL_URL"),
+             os.environ.get("VERCEL_PROJECT_PRODUCTION_URL")):
+    if host and host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(host)
 CSRF_TRUSTED_ORIGINS = [
     origin.strip() for origin in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
     if origin.strip()
@@ -31,6 +35,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 ROOT_URLCONF = "student_ai.urls"
+WSGI_APPLICATION = "student_ai.wsgi.application"
 TEMPLATES = [{
     "BACKEND": "django.template.backends.django.DjangoTemplates",
     "DIRS": [BASE_DIR / "templates"],
