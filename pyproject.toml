@@ -10,5 +10,4 @@ dependencies = [
 ]
 
 [tool.vercel.scripts]
-build = "python build.py"[tool.vercel.scripts]
 build = "python build.py"
