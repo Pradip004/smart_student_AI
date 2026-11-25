@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import HttpResponse
@@ -10,7 +10,7 @@ from .forms import AskAIForm, ExcelImportForm, StudentForm
 from .models import Student
 
 
-@login_required
+
 def dashboard(request):
     q = request.GET.get("q", "").strip()
     students = Student.objects.all()
@@ -26,7 +26,7 @@ def dashboard(request):
                    "match_count": match_count})
 
 
-@login_required
+
 def student_add(request):
     form = StudentForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
@@ -36,7 +36,7 @@ def student_add(request):
     return render(request, "student_form.html", {"form": form, "title": "Add Student"})
 
 
-@login_required
+
 def student_edit(request, pk):
     student = get_object_or_404(Student, pk=pk)
     form = StudentForm(request.POST or None, instance=student)
@@ -47,7 +47,7 @@ def student_edit(request, pk):
     return render(request, "student_form.html", {"form": form, "title": "Edit Student"})
 
 
-@login_required
+
 def student_delete(request, pk):
     student = get_object_or_404(Student, pk=pk)
     if request.method == "POST":
@@ -57,7 +57,7 @@ def student_delete(request, pk):
     return render(request, "student_confirm_delete.html", {"student": student})
 
 
-@login_required
+
 def import_excel(request):
     form = ExcelImportForm(request.POST or None, request.FILES or None)
     result = None
@@ -74,7 +74,7 @@ def import_excel(request):
         "required": services.REQUIRED_COLUMNS, "optional": services.OPTIONAL_COLUMNS})
 
 
-@login_required
+
 def ask_ai(request):
     form = AskAIForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
@@ -91,7 +91,7 @@ def ask_ai(request):
     return render(request, "ask_ai.html", {"form": form})
 
 
-@login_required
+
 def ai_results(request):
     filters = request.session.get("last_filters")
     if filters is None:
@@ -105,7 +105,7 @@ def ai_results(request):
     })
 
 
-@login_required
+
 def export_report(request, fmt):
     builders = {
         "xlsx": (reports.build_xlsx,
