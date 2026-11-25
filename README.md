@@ -1,7 +1,8 @@
 # Smart Student AI
 
-Django app for searching and managing student records. The directory, AI search,
-imports, and reports require a signed-in account.
+Django app for searching and managing student records. Application pages are
+public: anyone can view, add, edit, delete, import, and export student records.
+Do not use this deployment mode with private student data.
 
 ## Local development
 
@@ -10,7 +11,7 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 python manage.py migrate
-python manage.py createsuperuser
+python manage.py createsuperuser  # optional; only for protected /admin/ access
 python manage.py runserver
 ```
 
@@ -29,10 +30,9 @@ endpoint and optionally set `OLLAMA_MODEL` before running searches.
    persistent paid service tiers.
 3. Set `OLLAMA_URL` in the Render service environment to your hosted Ollama
    endpoint. Do not commit credentials or tokens.
-4. After the first deployment, open the Render Shell and run
-   `python manage.py createsuperuser` to create the initial sign-in.
-5. Import student data after signing in. The local database is intentionally
-   excluded from Git and is not copied to the hosted database.
+4. Create a superuser only if you need the protected Django admin at `/admin/`.
+5. The local database is intentionally excluded from Git and is not copied to
+   the hosted database.
 
 The Render Blueprint configures PostgreSQL, HTTPS, static files, database
 migrations, and a generated Django secret key. `DJANGO_DEBUG` is disabled for
@@ -56,8 +56,7 @@ environment variables before deploying:
 
 SQLite is suitable only for local development; Vercel's function filesystem is
 not persistent. Production builds run `python manage.py migrate --noinput`
-against the configured database and fail if `DATABASE_URL` is missing. After
-deploying, create the initial account with
-`python manage.py createsuperuser` from a trusted environment configured to use
-the hosted database. Never commit database URLs, secrets, or local environment
+against the configured database and fail if `DATABASE_URL` is missing. The
+application routes do not require a sign-in; `/admin/` remains protected and
+requires a superuser. Never commit database URLs, secrets, or local environment
 files.
