@@ -1,23 +1,62 @@
 import os
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from django.contrib.messages import constants as message_constants
+
+
+def _host_list(raw_value, default=""):
+    values = []
+    for item in (raw_value or default).split(","):
+        candidate = item.strip()
+        if not candidate:
+            continue
+        if "//" in candidate:
+            candidate = urlsplit(candidate).netloc or candidate
+        elif "/" in candidate:
+            candidate = candidate.split("/", 1)[0]
+        if candidate and candidate not in values:
+            values.append(candidate)
+    return values
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-only-insecure-key-change-me")
 DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() == "true"
-ALLOWED_HOSTS = [
-    host.strip() for host in os.environ.get(
-        "ALLOWED_HOSTS", "localhost,127.0.0.1").split(",") if host.strip()
-]
-for host in (os.environ.get("VERCEL_URL"),
-             os.environ.get("VERCEL_PROJECT_PRODUCTION_URL")):
+ALLOWED_HOSTS = _host_list(os.environ.get("ALLOWED_HOSTS"), "localhost,127.0.0.1")
+for host in (
+    os.environ.get("VERCEL_URL"),
+    os.environ.get("VERCEL_PROJECT_PRODUCTION_URL"),
+    os.environ.get("VERCEL_BRANCH_URL"),
+):
     if host and host not in ALLOWED_HOSTS:
         ALLOWED_HOSTS.append(host)
-CSRF_TRUSTED_ORIGINS = [
-    origin.strip() for origin in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
-    if origin.strip()
-]
+
+
+def _csrf_trusted_origins(hosts):
+    origins = []
+    for host in hosts:
+        clean_host = host.strip()
+        if not clean_host:
+            continue
+        if clean_host.startswith(("http://", "https://")):
+            origin = clean_host
+        else:
+            origin = f"https://{clean_host}"
+            if clean_host in {"localhost", "127.0.0.1"}:
+                origins.append(f"http://{clean_host}")
+        if origin not in origins:
+            origins.append(origin)
+    if any(".vercel.app" in host for host in hosts):
+        origins.append("https://*.vercel.app")
+    if any(".vercel.dev" in host for host in hosts):
+        origins.append("https://*.vercel.dev")
+    return origins
+
+
+CSRF_TRUSTED_ORIGINS = _csrf_trusted_origins(
+    _host_list(os.environ.get("CSRF_TRUSTED_ORIGINS"), "") + ALLOWED_HOSTS
+)
 
 INSTALLED_APPS = [
     "django.contrib.admin", "django.contrib.auth", "django.contrib.contenttypes",

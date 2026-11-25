@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} | Smart Office AI{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-xl-8">
+  <div class="mb-4">
+    <p class="small text-uppercase muted mb-1">Recruitment workspace</p>
+    <h1 class="h3 mb-0">{{ title }}</h1>
+  </div>
+  <div class="card shadow-sm"><div class="card-body p-4">
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      <div class="row">
+      {% for field in form %}
+        <div class="mb-3 {% if field.name == 'skills' or field.name == 'interview_notes' %}col-12{% else %}col-md-6{% endif %}">
+          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.name == "resume" and candidate.resume %}
+            <div class="form-text">Current file: <a href="{% url 'candidate_resume' candidate.pk %}">{{ candidate.resume.name|cut:"candidate_resumes/" }}</a></div>
+          {% endif %}
+          {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+          {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+        </div>
+      {% endfor %}
+      </div>
+      <button class="btn btn-primary">Save candidate</button>
+      <a class="btn btn-outline-secondary" href="{% url 'candidate_list' %}">Cancel</a>
+    </form>
+  </div></div>
+</div></div>
+{% endblock %}

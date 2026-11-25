@@ -51,6 +51,8 @@ environment variables before deploying:
 - `OLLAMA_MODEL`: a model available at that endpoint, if not `gemma3:4b`.
 - `ALLOWED_HOSTS`: add any custom domain not provided by Vercel's deployment
   environment.
+- `CSRF_TRUSTED_ORIGINS`: optional for custom domains; Vercel deployment URLs
+  and `*.vercel.app` origins are trusted automatically by Django.
 
 SQLite is suitable only for local development; Vercel's function filesystem is
 not persistent. Production builds run `python manage.py migrate --noinput`
