@@ -1,12 +1,11 @@
 from django.urls import path
-from django.contrib.auth import views as auth_views
+
 
 from . import views
 
 urlpatterns = [
-    path("accounts/login/", auth_views.LoginView.as_view(
-        template_name="registration/login.html"), name="login"),
-    path("accounts/logout/", auth_views.LogoutView.as_view(), name="logout"),
+    
+    
     path("ask-ai/", views.ask_ai, name="ask_ai"),
     path("students/results/", views.ai_results, name="ai_results"),
     path("export/<str:fmt>/", views.export_report, name="export_report"),
