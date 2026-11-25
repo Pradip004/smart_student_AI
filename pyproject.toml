@@ -1,2 +1,14 @@
+[project]
+name = "smart-student-ai"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "Django>=5.2,<5.3",
+    "dj-database-url>=2.2",
+    "psycopg[binary]>=3.2",
+    "whitenoise>=6.8",
+]
+
 [tool.vercel.scripts]
+build = "python build.py"[tool.vercel.scripts]
 build = "python build.py"
